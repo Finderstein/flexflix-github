@@ -8,7 +8,6 @@ import { useUser } from "../../../../contexts/UserContext";
 import { useGetAsyncData } from "../../../hooks/useGetAsyncData";
 
 const ShowMainInfo = ({ show }) => {
-  console.log(show);
   const { currentUser, currentUserInfo, updateUserInfo, getUserInfo } =
     useUser();
   const [firestoreShow, setFirestoreShow] = useState();

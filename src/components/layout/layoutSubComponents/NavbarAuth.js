@@ -3,9 +3,9 @@ import UserNotAuthorized from "./UserNotAuthorized";
 import UserAuthorized from "./UserAuthorized";
 
 const NavbarAuth = () => {
-	const { currentUser } = useUser();
+  const { currentUser } = useUser();
 
-	return <>{currentUser ? <UserAuthorized /> : <UserNotAuthorized />}</>;
+  return <>{currentUser ? <UserAuthorized /> : <UserNotAuthorized />}</>;
 };
 
 export default NavbarAuth;

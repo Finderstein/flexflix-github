@@ -4,36 +4,36 @@ import UserMainInfo from "../../utilities/UserInfo/UserMainInfo";
 import UserTabs from "../../utilities/UserInfo/UserTabs";
 
 const UserPage = ({
-	match: {
-		params: { id },
-	},
+  match: {
+    params: { id },
+  },
 }) => {
-	const { subscribeToOtherUser, otherUserInfo, otherUserPhoto } = useUser();
-	useEffect(() => {
-		subscribeToOtherUser(id);
-	}, []);
+  const { subscribeToOtherUser, otherUserInfo, otherUserPhoto } = useUser();
+  useEffect(() => {
+    subscribeToOtherUser(id);
+  }, []);
 
-	return (
-		<>
-			{otherUserInfo && otherUserPhoto && (
-				<>
-					<UserMainInfo
-						user={{
-							uid: id,
-							userInfo: otherUserInfo,
-							userPhoto: otherUserPhoto,
-						}}
-					/>
-					<UserTabs
-						user={{
-							uid: id,
-							userInfo: otherUserInfo,
-						}}
-					/>
-				</>
-			)}
-		</>
-	);
+  return (
+    <>
+      {otherUserInfo && (
+        <>
+          <UserMainInfo
+            user={{
+              uid: id,
+              userInfo: otherUserInfo,
+              userPhoto: otherUserPhoto,
+            }}
+          />
+          <UserTabs
+            user={{
+              uid: id,
+              userInfo: otherUserInfo,
+            }}
+          />
+        </>
+      )}
+    </>
+  );
 };
 
 export default UserPage;

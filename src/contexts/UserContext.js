@@ -73,7 +73,7 @@ export const UserProvider = ({ children }) => {
   // This function is used for:
   // 	1.Navbar user photo
   // 	2.AllUsersPage for user cards
-  //  3.ProfilePage and UserPage for user photo and friends
+  //  	3.ProfilePage and UserPage for user photo and friends
   const getProfilePhoto = async (user) => {
     if (!user || user.photo === "") {
       return null;
@@ -171,12 +171,16 @@ export const UserProvider = ({ children }) => {
       (doc) => {
         const user = doc.data();
         setCurrentUserInfo(user);
+        if (!user) {
+          return;
+        }
         if (user.photo !== "") {
           getDownloadURL(ref(storage, user.photo)).then((url) => {
             setUserPhoto(url);
             setLoading(false);
           });
         } else {
+          setUserPhoto(null);
           setLoading(false);
         }
       }
@@ -206,6 +210,7 @@ export const UserProvider = ({ children }) => {
             setLoading(false);
           });
         } else {
+          setOtherUserPhoto(null);
           setLoading(false);
         }
       }
@@ -237,8 +242,6 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={userAPI}>
-      {!loading && children}
-    </UserContext.Provider>
+    <UserContext.Provider value={userAPI}>{children}</UserContext.Provider>
   );
 };

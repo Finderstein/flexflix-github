@@ -12,6 +12,6 @@ If you do see this, than simply reload your page and it should work just fine.
 
 ### Contacts
 
-If you want to contact me, please write send me message via telegram: @Finderstein
+If you want to contact me, please send me message via telegram: @Finderstein
 
 Or send me an email: Yaroslav_Perehuda@epam.com
