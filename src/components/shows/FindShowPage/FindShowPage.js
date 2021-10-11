@@ -25,7 +25,11 @@ const FindShowPage = () => {
 		sort: "Most popular",
 		query: "",
 	});
-	const { shows, hasMore, loading, error } = useShowSearch(data, pageNumber);
+	const { shows, loading, error, setLoading } = useShowSearch(
+		data,
+		pageNumber,
+		setPageNumber
+	);
 
 	const observer = useRef();
 	const lastBookElementRef = useCallback(
@@ -35,7 +39,6 @@ const FindShowPage = () => {
 			observer.current = new IntersectionObserver((entries) => {
 				if (
 					entries[0].isIntersecting &&
-					hasMore &&
 					pageNumber < 232 &&
 					data.query === ""
 				) {
@@ -44,12 +47,13 @@ const FindShowPage = () => {
 			});
 			if (node) observer.current.observe(node);
 		},
-		[loading, hasMore]
+		[loading]
 	);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
+		setLoading(true);
 		const formData = new FormData(e.target);
 		const formDataObj = Object.fromEntries(formData.entries());
 
@@ -91,11 +95,10 @@ const FindShowPage = () => {
 					<Form.Label>Type show name</Form.Label>
 					<Form.Control type="text" name="query" ref={nameRef} />
 					<Form.Text className="text-muted">
-						Because of the problems with API search by show name
-						will return maximum 10 shows. That's why you may not
-						find show that you are searching for. If you have
-						additional params from selects higher it further
-						dimishes your chances to find the target show.
+						Because of the problems with API search by show name will return
+						maximum 10 shows. That's why you may not find show that you are
+						searching for. If you have additional params from selects higher it
+						further dimishes your chances to find the target show.
 					</Form.Text>
 				</Form.Group>
 
@@ -104,25 +107,25 @@ const FindShowPage = () => {
 				</Button>
 			</Form>
 			<div className="row">
-				{shows && shows.length !== 0 ? (
-					shows.map((show, index) => {
-						if (shows.length === index + 1) {
-							return (
-								<SmallShowCard
-									ref={lastBookElementRef}
-									key={show.id}
-									show={show}
-								/>
-							);
-						} else {
-							return <SmallShowCard key={show.id} show={show} />;
-						}
-					})
-				) : (
-					<p className="text-muted mt-3 h3">
-						No shows with this paramaterers
-					</p>
-				)}
+				{shows && shows.length !== 0
+					? shows.map((show, index) => {
+							if (shows.length === index + 1) {
+								return (
+									<SmallShowCard
+										ref={lastBookElementRef}
+										key={show.id}
+										show={show}
+									/>
+								);
+							} else {
+								return <SmallShowCard key={show.id} show={show} />;
+							}
+					  })
+					: !loading && (
+							<p className="text-muted mt-3 h3">
+								No shows with this paramaterers
+							</p>
+					  )}
 				{loading && (
 					<div
 						className="spinner-border"

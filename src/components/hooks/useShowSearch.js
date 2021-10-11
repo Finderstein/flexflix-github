@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 
-// I know its sh*t but it's works somehow and because given API is so bad I have no other choice.
-// I don't have enougn experience and time to make it how it should be done.
-
 const complexFilter = (array, data) => {
 	const uniqueID = new Set();
 	const filteredArray = array.filter((show) => {
@@ -27,8 +24,7 @@ const complexFilter = (array, data) => {
 
 		if (data.runtime !== "") {
 			validShow =
-				+show.runtime <= +data.runtime &&
-				+show.runtime >= +data.runtime - 30;
+				+show.runtime <= +data.runtime && +show.runtime >= +data.runtime - 30;
 		}
 		if (data.status !== "") {
 			validShow = show.status === data.status;
@@ -49,36 +45,16 @@ const complexFilter = (array, data) => {
 				filteredArray.sort((a, b) => +a.weight - +b.weight);
 				break;
 			case "Highest rating":
-				filteredArray.sort(
-					(a, b) => +b.rating.average - +a.rating.average
-				);
+				filteredArray.sort((a, b) => +b.rating.average - +a.rating.average);
 				break;
 			case "Lowest rating":
-				filteredArray.sort(
-					(a, b) => +a.rating.average - +b.rating.average
-				);
+				filteredArray.sort((a, b) => +a.rating.average - +b.rating.average);
 				break;
 			case "A to Z":
-				filteredArray.sort((a, b) => {
-					if (a.name < b.name) {
-						return -1;
-					}
-					if (a.name > b.name) {
-						return 1;
-					}
-					return 0;
-				});
+				filteredArray.sort((a, b) => a.name.localeCompare(b.name));
 				break;
 			case "Z to A":
-				filteredArray.sort((a, b) => {
-					if (a.name < b.name) {
-						return 1;
-					}
-					if (a.name > b.name) {
-						return -1;
-					}
-					return 0;
-				});
+				filteredArray.sort((a, b) => b.name.localeCompare(a.name));
 				break;
 			default:
 				filteredArray.sort((a, b) => +b.weight - +a.weight);
@@ -88,12 +64,11 @@ const complexFilter = (array, data) => {
 	return filteredArray;
 };
 
-const useShowSearch = (data, pageNumber) => {
+const useShowSearch = (data, pageNumber, setPageNumber) => {
 	const [prevData, setPrevData] = useState();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(false);
 	const [shows, setShows] = useState([]);
-	const [hasMore, setHasMore] = useState(false);
 	const mounted = useRef(false);
 
 	useEffect(() => {
@@ -115,13 +90,16 @@ const useShowSearch = (data, pageNumber) => {
 			.then((res) => res.json())
 			.then((res) => {
 				const respShows =
-					data.query === ""
-						? [...shows, ...res]
-						: res.map((item) => item.show);
-				const filteredShows = complexFilter(respShows, data);
+					data.query === "" ? res : res.map((item) => item.show);
+				const filteredShows = complexFilter([...shows, ...respShows], data);
+
+				if (filteredShows.length === 0 && pageNumber < 232) {
+					setPageNumber((prevPageNumber) => prevPageNumber + 1);
+				} else {
+					setLoading(false);
+				}
+
 				setShows(filteredShows);
-				setHasMore(filteredShows.length > 0);
-				setLoading(false);
 			})
 			.catch((e) => {
 				console.log(e);
@@ -133,7 +111,7 @@ const useShowSearch = (data, pageNumber) => {
 		};
 	}, [data, pageNumber]);
 
-	return { loading, error, shows, hasMore };
+	return { loading, error, shows, setLoading };
 };
 
 export default useShowSearch;
